@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Male Sterility in Cotton — Interactive Learning Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1b4332;
+      --primary-light: #2d6a4f;
+      --accent: #52b788;
+      --accent-subtle: #d8f3dc;
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --text: #1b2621;
+      --text-muted: #596b62;
+      --border: #dbe4de;
+      --correct: #15803d;
+      --correct-bg: #dcfce7;
+      --incorrect: #b91c1c;
+      --incorrect-bg: #fee2e2;
+      --shadow-sm: 0 2px 4px rgba(27,67,50,0.04);
+      --shadow-md: 0 6px 16px rgba(27,67,50,0.08);
+      --shadow-lg: 0 12px 30px rgba(27,67,50,0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 24px 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Hero Header */
+    .hero-banner {
+      background: linear-gradient(135deg, #081c15, #1b4332, #2d6a4f);
+      color: #ffffff;
+      padding: 32px 28px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: "🌸";
+      position: absolute;
+      right: 20px;
+      bottom: -15px;
+      font-size: 8rem;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero-banner h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .hero-meta {
+      font-size: 0.88rem;
+      color: #b7e4c7;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Sticky Navigation & Live Stats */
+    .controls-wrapper {
+      position: sticky;
+      top: 14px;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-bar {
+      flex: 1 1 240px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px 14px 10px 36px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #fafcfb;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.25);
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--accent-subtle);
+      border-color: var(--accent);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .score-meter {
+      background: var(--accent-subtle);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Section Banner */
+    .section-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      color: var(--primary);
+      margin: 28px 0 14px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-heading span.badge {
+      background: var(--accent);
+      color: #081c15;
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    /* Cards */
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .q-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .q-meta-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .q-id {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary-light);
+      background: #edf7f1;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .q-text {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    /* MCQ Option Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 650px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      text-align: left;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #fafcfb;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .option-btn:hover:not([disabled]) {
+      border-color: var(--accent);
+      background: #f1f8f4;
+    }
+
+    .option-btn.correct {
+      background: var(--correct-bg) !important;
+      border-color: var(--correct) !important;
+      color: var(--correct) !important;
+      font-weight: 700;
+    }
+
+    .option-btn.incorrect {
+      background: var(--incorrect-bg) !important;
+      border-color: var(--incorrect) !important;
+      color: var(--incorrect) !important;
+    }
+
+    /* Explanation & Reveal Panels */
+    .feedback-box {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.87rem;
+      line-height: 1.45;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: fadeIn 0.25s ease-in;
+    }
+
+    .feedback-box.correct {
+      background: var(--correct-bg);
+      border-left: 4px solid var(--correct);
+      color: #14532d;
+    }
+
+    .feedback-box.incorrect {
+      background: var(--incorrect-bg);
+      border-left: 4px solid var(--incorrect);
+      color: #7f1d1d;
+    }
+
+    /* Fill-In-The-Blank Input Styling */
+    .fib-wrapper {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .fib-input {
+      flex: 1 1 200px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .fib-input:focus {
+      border-color: var(--accent);
+    }
+
+    .fib-submit-btn {
+      padding: 9px 18px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    .fib-submit-btn:hover {
+      background: var(--primary);
+    }
+
+    /* Flashcard Style Reveal */
+    .reveal-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px dashed var(--accent);
+      color: var(--primary-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      margin-top: 6px;
+    }
+
+    .reveal-trigger:hover {
+      background: var(--accent-subtle);
+    }
+
+    .revealed-content {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: #edf7f1;
+      border-left: 4px solid var(--primary-light);
+      font-size: 0.9rem;
+      color: #0f3322;
+    }
+
+    .revealed-content.show {
+      display: block;
+      animation: fadeIn 0.25s ease-in;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Hero Header -->
+    <div class="hero-banner">
+      <div class="badge-pill">KVK / ARS Mamurabad OJT • Group I</div>
+      <h1>Male Sterility in Cotton</h1>
+      <div class="hero-meta">
+        <span><strong>T.Y.B.Sc. Botany</strong></span>
+        <span>•</span>
+        <span>Team: Kumudini Jha, Diksha Patel, Rina Padvi</span>
+        <span>•</span>
+        <span>Exam: 21/10/2026</span>
+      </div>
+    </div>
+
+    <!-- Live Controls -->
+    <div class="controls-wrapper">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24"><path d="M10 18a7.952 7.952 0 0 0 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396A7.952 7.952 0 0 0 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>
+        <input type="text" id="liveSearch" placeholder="Type keyword (e.g. tapetum, harknessii, Doak)...">
+      </div>
+
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All (60)</button>
+        <button class="filter-btn" data-filter="mcq">MCQ (20)</button>
+        <button class="filter-btn" data-filter="short">One-Sentence (15)</button>
+        <button class="filter-btn" data-filter="blank">Blanks (15)</button>
+        <button class="filter-btn" data-filter="ojt">OJT Practical (10)</button>
+      </div>
+
+      <div class="score-meter" id="scoreBadge">
+        <span>Score:</span> <strong id="scoreVal">0</strong> / <span id="attemptedVal">0</span>
+      </div>
+    </div>
+
+    <!-- QUESTIONS WRAPPER -->
+    <div id="questionsContainer">
+
+      <!-- ==================== PART A: MCQS ==================== -->
+      <div class="section-heading" data-type="mcq">
+        <span>Part A: Multiple Choice Questions</span>
+        <span class="badge">20 Items</span>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 01</span></div>
+        <div class="q-text">Male sterility is the inability of a plant to produce:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Sterility specifically impairs male gamete formation; ovules remain normal.')">(a) functional ovules</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Male sterility is the structural or functional inability to produce viable pollen.')">(b) functional pollen</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Seeds will readily form if cross-pollinated with fertile pollen.')">(c) seeds</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The vegetative and floral anatomy develops normally.')">(d) flowers</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 02</span></div>
+        <div class="q-text">A male-sterile plant can be used only as the:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'It produces no viable pollen, so it cannot act as a male pollinator.')">(a) male parent</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Because its pistil is functional, it acts exclusively as the seed (female) parent.')">(b) female parent</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'It cannot serve as a pollen donor.')">(c) both parents</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'It is actively used as the female parent.')">(d) neither parent</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 03</span></div>
+        <div class="q-text">Genetic male sterility (GMS) is controlled by:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Cytoplasmic male sterility (CMS) is controlled by mitochondrial/cytoplasmic factors.')">(a) cytoplasmic factors</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! GMS is governed by recessive Mendelian nuclear genes (ms).')">(b) nuclear gene(s)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Chloroplast genes do not control GMS.')">(c) chloroplast genes</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Environmental variants exist, but GMS is genetically dictated.')">(d) environment only</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 04</span></div>
+        <div class="q-text">Cytoplasmic male sterility (CMS) is inherited through the:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Pollen contributes negligible cytoplasm during angiosperm fertilization.')">(a) male parent</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Pollen transmits nuclear material only.')">(b) pollen</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! The zygote inherits all its cytoplasm from the egg cell of the maternal parent.')">(c) female (maternal) parent</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Maternal inheritance is non-Mendelian and uniparental.')">(d) both equally</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 05</span></div>
+        <div class="q-text">The CMS in cotton was derived from the cytoplasm of:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'G. arboreum is a cultivated Asiatic diploid cotton.')">(a) G. arboreum</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! V.G. Meyer transferred the sterile cytoplasm from the wild diploid Gossypium harknessii.')">(b) G. harknessii</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'G. herbaceum has normal cytoplasm.')">(c) G. herbaceum</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'G. hirsutum is the recipient cultivated species.')">(d) G. hirsutum</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 06</span></div>
+        <div class="q-text">Male sterility from <em>G. harknessii</em> was reported by:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Mariani worked on Barnase/Barstar transgenic sterility in 1990.')">(a) Mariani (1990)</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! V.G. Meyer documented the harknessii CMS transfer in 1975.')">(b) Meyer (1975)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Allard was an author of classic plant breeding texts.')">(c) Allard (1960)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Mendel worked on Pisum sativum in 1866.')">(d) Mendel (1866)</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 07</span></div>
+        <div class="q-text">The gene symbol for a nuclear fertility restorer is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'ms denotes the recessive male-sterile gene.')">(a) ms</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Ms denotes the dominant fertile allele in GMS.')">(b) Ms</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Rf stands for Restorer of fertility.')">(c) Rf</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Bt refers to Bacillus thuringiensis transgenic cotton.')">(d) Bt</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 08</span></div>
+        <div class="q-text">In the three-line system, the <strong>A line</strong> is the:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The R line is the restorer line.')">(a) restorer line</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The B line is the maintainer line.')">(b) maintainer line</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! The A line is the male-sterile seed parent.')">(c) male-sterile line</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The R line is the commercial pollinator.')">(d) pollinator line</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 09</span></div>
+        <div class="q-text">The <strong>B line</strong> is also designated as the:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! The B line maintains the male-sterile A line by pollinating it.')">(a) maintainer line</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The restorer line is called the R line.')">(b) restorer line</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The hybrid is the F1 progeny of A x R.')">(c) hybrid</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Check varieties are reference standard controls.')">(d) check variety</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 10</span></div>
+        <div class="q-text">The complete genotype of the male-sterile A line is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'N (Rf Rf) is a normal fertile cytoplasm restorer.')">(a) N (Rf Rf)</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! S (rf rf) combines sterile cytoplasm with non-restoring recessive nuclear alleles.')">(b) S (rf rf)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'N (rf rf) is the genotype of the B maintainer line.')">(c) N (rf rf)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'S (Rf Rf) would be restored and male-fertile.')">(d) S (Rf Rf)</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 11</span></div>
+        <div class="q-text">The F₁ progeny resulting from crossing <strong>A line × R line</strong> is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The R line contributes a dominant Rf gene, restoring fertility.')">(a) male-sterile</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! It possesses sterile cytoplasm but is fully restored by heterozygous Rf rf.')">(b) fertile, S (Rf rf)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Female organs remain completely unaffected.')">(c) female-sterile</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The progeny is vigorous and fully viable.')">(d) lethal</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 12</span></div>
+        <div class="q-text">Crossing a GMS line (<em>ms ms</em>) with a heterozygous maintainer (<em>Ms ms</em>) segregates as:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, '3:1 is typical for an F2 monohybrid selfing, not a testcross.')">(a) 3 : 1</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! ms ms x Ms ms produces 50% Ms ms (fertile) and 50% ms ms (sterile).')">(b) 1 : 1</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, '9:7 is a complementary gene interaction ratio.')">(c) 9 : 7</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, '1:2:1 is an incomplete dominance ratio.')">(d) 1 : 2 : 1</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 13</span></div>
+        <div class="q-text">The bacterial enzyme <em>Barnase</em> acts by selectively destroying the:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'The stigma is untouched and completely receptive.')">(a) stigma</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Driven by the TA29 promoter, Barnase ribonuclease destroys the nutritive tapetum.')">(b) tapetum</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Ovule and embryo sac remain fully fertile.')">(c) ovule</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Petals expand normally.')">(d) petals</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 14</span></div>
+        <div class="q-text">In transgenic lines, the product of the <em>Barstar</em> gene functions as an:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Barstar binds tightly to Barnase, acting as an intracellular inhibitor to restore fertility.')">(a) inhibitor of barnase</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'It suppresses, not induces, Barnase activity.')">(b) inducer of barnase</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Barstar has no insecticidal action.')">(c) pesticide</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'It is an enzyme inhibitor, not a phytohormone.')">(d) growth hormone</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 15</span></div>
+        <div class="q-text">Chemicals applied to induce temporary pollen sterility are termed:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Herbicides kill unwanted weed species.')">(a) herbicides</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Gametocides (Chemical Hybridizing Agents) sterilize male organs temporarily.')">(b) gametocides</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Fungicides manage fungal phytopathogens.')">(c) fungicides</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Fertilizers supply essential mineral nutrients.')">(d) fertilizers</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 16</span></div>
+        <div class="q-text">The world's first commercial cotton hybrid (Hybrid-4) was developed at:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Bred by Dr. C.T. Patel at the Main Cotton Research Station, Surat (1970).')">(a) Surat</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Nagpur is home to ICAR-CICR.')">(b) Nagpur</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Jalgaon released landmark varieties like JLH-168 and Y-1.')">(c) Jalgaon</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Rahuri is the MPKV university headquarters.')">(d) Rahuri</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 17</span></div>
+        <div class="q-text">The number of parental lines required in Genetic Male Sterility (GMS) is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'At least two lines are needed.')">(a) one</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Two lines: a female line maintained as a heterozygote and a fertile male parent.')">(b) two</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Three lines (A, B, R) are used in CGMS, not GMS.')">(c) three</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Four lines are used in double-cross systems.')">(d) four</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 18</span></div>
+        <div class="q-text">In cotton, all stamens fuse by their filaments into a tube surrounding the style; this is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Diadelphous forms two staminal bundles, typical of Fabaceae (9)+1.')">(a) diadelphous</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Polyadelphous forms multiple staminal bundles (e.g. Citrus).')">(b) polyadelphous</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! All filaments fuse into a single central staminal column (Malvaceae characteristic).')">(c) monadelphous</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Syngenesious refers to fusion of anthers only (Asteraceae).')">(d) syngenesious</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 19</span></div>
+        <div class="q-text">The somatic chromosome number of American tetraploid cotton (<em>G. hirsutum</em>) is:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, '2n = 26 represents diploid Old World Desi cottons.')">(a) 2n = 26</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! An allotetraploid amphidiploid with 2n = 4x = 52 (AADD genome).')">(b) 2n = 52</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'n = 13 is the gametic number of diploids.')">(c) 2n = 24</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, '2n = 78 represents triploids/hexaploids.')">(d) 2n = 78</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" data-type="mcq">
+        <div class="q-meta-line"><span class="q-id">MCQ 20</span></div>
+        <div class="q-text">Cotton pollen is heavy and sticky; natural cross-pollination is carried out by:</div>
+        <div class="options-grid" data-answered="false">
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Wind cannot carry heavy, spinous cotton pollen grains.')">(a) wind</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Water pollination does not occur in terrestrial crops.')">(b) water</button>
+          <button class="option-btn" onclick="evalMCQ(this, true, 'Correct! Entomophilous transfer is driven by honeybees and bumblebees visiting nectaries.')">(c) insects (bees)</button>
+          <button class="option-btn" onclick="evalMCQ(this, false, 'Birds are not regular cotton pollinators.')">(d) birds</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- ==================== PART B: ONE SENTENCE ==================== -->
+      <div class="section-heading" data-type="short">
+        <span>Part B: Answer in One Sentence (Flashcards)</span>
+        <span class="badge">15 Items</span>
+      </div>
+
+      <!-- S1 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 01</span></div>
+        <div class="q-text">Q1. Define male sterility.</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Male sterility is the condition where a plant fails to produce viable, functional pollen grains while its female organs (pistil) remain normal and fertile.
+        </div>
+      </div>
+
+      <!-- S2 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 02</span></div>
+        <div class="q-text">Q2. Why is male sterility useful in cotton?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> It completely eliminates the labor-intensive and expensive requirement of hand emasculation, making commercial hybrid seed production cheaper and genetically pure.
+        </div>
+      </div>
+
+      <!-- S3 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 03</span></div>
+        <div class="q-text">Q3. Name two types of male sterility.</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Genetic Male Sterility (GMS) and Cytoplasmic Male Sterility (CMS) (or Cytoplasmic-Genetic Male Sterility / CGMS).
+        </div>
+      </div>
+
+      <!-- S4 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 04</span></div>
+        <div class="q-text">Q4. What is <em>Rf</em>?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> <em>Rf</em> is a dominant nuclear "Restorer of Fertility" gene capable of suppressing the effect of sterile cytoplasm and restoring pollen fertility in hybrid progeny.
+        </div>
+      </div>
+
+      <!-- S5 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 05</span></div>
+        <div class="q-text">Q5. What are gametocides?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Gametocides (Chemical Hybridizing Agents) are chemical compounds sprayed to induce selective, temporary male sterility without damaging female fertility.
+        </div>
+      </div>
+
+      <!-- S6 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 06</span></div>
+        <div class="q-text">Q6. What is the function of the B line?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> The B line (maintainer line) has normal cytoplasm with non-restorer genes and is crossed with the male-sterile A line to multiply and perpetuate the A line.
+        </div>
+      </div>
+
+      <!-- S7 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 07</span></div>
+        <div class="q-text">Q7. How is a GMS line maintained?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> By crossing homozygous sterile female plants (<em>ms ms</em>) with heterozygous fertile maintainer plants (<em>Ms ms</em>), yielding a 1:1 ratio of sterile to fertile plants.
+        </div>
+      </div>
+
+      <!-- S8 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 08</span></div>
+        <div class="q-text">Q8. What is roguing?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Roguing is the systematic manual identification and uprooting of off-type, undesirable, or fertile pollen-shedding plants from a seed multiplication plot.
+        </div>
+      </div>
+
+      <!-- S9 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 09</span></div>
+        <div class="q-text">Q9. What is emasculation?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Emasculation is the surgical removal of immature anthers or the staminal column from a bisexual flower bud before anther dehiscence.
+        </div>
+      </div>
+
+      <!-- S10 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 10</span></div>
+        <div class="q-text">Q10. Why are pollinated flowers bagged?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Bagging shields the receptive stigma from foreign, stray pollen carried by wind or insect vectors, ensuring absolute genetic hybrid purity.
+        </div>
+      </div>
+
+      <!-- S11 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 11</span></div>
+        <div class="q-text">Q11. What is heterosis?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Heterosis (hybrid vigour) is the phenotypic superiority, growth vigour, and productivity displayed by an F₁ hybrid compared to both of its inbred parents.
+        </div>
+      </div>
+
+      <!-- S12 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 12</span></div>
+        <div class="q-text">Q12. What is anthesis?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Anthesis is the morphological opening of the flower bud, marking the period when anthers dehisce and the stigma becomes receptive for pollination.
+        </div>
+      </div>
+
+      <!-- S13 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 13</span></div>
+        <div class="q-text">Q13. Which Bt genes are present in BG-II?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> Bollgard-II (BG-II) cotton contains two insecticidal crystal endotoxin genes: <em>Cry1Ac</em> and <em>Cry2Ab</em>.
+        </div>
+      </div>
+
+      <!-- S14 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 14</span></div>
+        <div class="q-text">Q14. State one limitation of GMS.</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> In the female parent rows, 50% of the plants segregate as fertile heterozygotes (<em>Ms ms</em>) and must be manually rogued before they shed pollen.
+        </div>
+      </div>
+
+      <!-- S15 -->
+      <div class="q-card" data-type="short">
+        <div class="q-meta-line"><span class="q-id">Sentence 15</span></div>
+        <div class="q-text">Q15. What is the tapetum?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Answer ▾</button>
+        <div class="revealed-content">
+          <strong>Answer:</strong> The tapetum is the innermost nutritive cellular layer of the anther microsporangium wall that provides nutrition to developing microspores.
+        </div>
+      </div>
+
+      <!-- ==================== PART C: BLANKS ==================== -->
+      <div class="section-heading" data-type="blank">
+        <span>Part C: Fill in the Blanks (Type & Check)</span>
+        <span class="badge">15 Items</span>
+      </div>
+
+      <!-- B1 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 01</span></div>
+        <div class="q-text">Q1. In male-sterile plants the ________ organ is completely normal.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="female,pistil,gynoecium">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B2 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 02</span></div>
+        <div class="q-text">Q2. Cytoplasmic male sterility (CMS) is inherited strictly ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="maternally,cytoplasmically,through female parent">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B3 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 03</span></div>
+        <div class="q-text">Q3. The three lines in the CGMS system are A, B and ________ lines.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="r,restorer,r line">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B4 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 04</span></div>
+        <div class="q-text">Q4. S (rf rf) is the genetic constitution of the ________ line.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="a,male-sterile,a line">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B5 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 05</span></div>
+        <div class="q-text">Q5. Genetic male sterility is controlled by ________ genes.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="nuclear,mendelian">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B6 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 06</span></div>
+        <div class="q-text">Q6. The CMS in cotton came from the wild cytoplasm of <em>Gossypium</em> ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="harknessii">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B7 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 07</span></div>
+        <div class="q-text">Q7. <em>Barnase</em> is specifically expressed in the ________ tissue layer of the anther.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="tapetum,tapetal">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B8 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 08</span></div>
+        <div class="q-text">Q8. Chemical hybridizing agents (CHAs) are commonly called ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="gametocides,male gametocides">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B9 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 09</span></div>
+        <div class="q-text">Q9. A GMS line is maintained by crossing <em>ms ms</em> × ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="ms ms,msms,heterozygote">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B10 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 10</span></div>
+        <div class="q-text">Q10. Sterile cotton anthers are shriveled and fail to ________ (open/shed pollen).</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="dehisce,burst,open">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B11 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 11</span></div>
+        <div class="q-text">Q11. The world's first commercial cotton hybrid was released from ________ in Gujarat.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="surat">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B12 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 12</span></div>
+        <div class="q-text">Q12. Cultivated diploid <em>G. arboreum</em> is popularly called ________ cotton.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="desi,deshi,asiatic">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B13 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 13</span></div>
+        <div class="q-text">Q13. Genetically modified BG-II cotton expresses Cry1Ac and ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="cry2ab,cry 2ab">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B14 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 14</span></div>
+        <div class="q-text">Q14. The physical removal of anthers from a flower bud before anthesis is called ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="emasculation">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- B15 -->
+      <div class="q-card" data-type="blank">
+        <div class="q-meta-line"><span class="q-id">Blank 15</span></div>
+        <div class="q-text">Q15. Eradication of unwanted or rogue plants from a breeding crop is called ________.</div>
+        <div class="fib-wrapper">
+          <input type="text" class="fib-input" placeholder="Type answer here..." data-ans="roguing,roughing">
+          <button class="fib-submit-btn" onclick="checkFIB(this)">Check</button>
+        </div>
+        <div class="feedback-box"></div>
+      </div>
+
+      <!-- ==================== PART D: OJT QUESTIONS ==================== -->
+      <div class="section-heading" data-type="ojt">
+        <span>Part D: OJT Field Application Scenarios</span>
+        <span class="badge">10 Field Items</span>
+      </div>
+
+      <!-- O1 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 01</span></div>
+        <div class="q-text"><strong>Q1. Visual Field Diagnosis:</strong> How can you identify a male-sterile cotton flower in the experimental field at Mamurabad during anthesis?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Field Diagnosis:</strong> Sterile anthers appear pale, shriveled, thin, and translucent; they do not burst or shed powdery yellow pollen onto the petals or stigma when shaken.
+        </div>
+      </div>
+
+      <!-- O2 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 02</span></div>
+        <div class="q-text"><strong>Q2. Microchemical Staining:</strong> What test did you observe in the field laboratory to verify pollen sterility under a microscope?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Staining Protocol:</strong> Staining with 1% I₂-KI (Lugol's iodine) or 1% acetocarmine. Fertile pollen grains with dense starch contents stain uniform dark brown/black; sterile grains remain unstained, shrunken, and empty.
+        </div>
+      </div>
+
+      <!-- O3 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 03</span></div>
+        <div class="q-text"><strong>Q3. Doak Method vs. GMS:</strong> Why does using a GMS female line save up to 80% labor over the conventional Doak method?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Labor Economics:</strong> In the Doak method, laborers must surgically slice the bracts and strip the monadelphous staminal column from unopened buds. In GMS plots, emasculation is done by genetics, so workers only need to dust pollen.
+        </div>
+      </div>
+
+      <!-- O4 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 04</span></div>
+        <div class="q-text"><strong>Q4. Roguing Timing in GMS:</strong> At what exact growth phase and daily timing must roguing of fertile plants be done in GMS female lines?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Operational Protocol:</strong> Daily at the crack of dawn (7:00 AM – 8:30 AM) right at initial flower flush. The 50% heterozygous fertile plants (shedding yellow pollen) must be pulled out by the roots before insects can spread their pollen.
+        </div>
+      </div>
+
+      <!-- O5 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 05</span></div>
+        <div class="q-text"><strong>Q5. Planting Ratio:</strong> What row ratio of Female (A line) to Male (R line) is planted in the crossing plots?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Plot Layout:</strong> Typically <strong>4:1 or 5:1</strong> (4 to 5 female rows per 1 male pollinator border row). This provides convenient walking corridors for dusting male pollen onto female flowers.
+        </div>
+      </div>
+
+      <!-- O6 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 06</span></div>
+        <div class="q-text"><strong>Q6. Morphological Markers:</strong> Why do cotton breeders link marker genes (like red stem or okra leaf) to the male sterility gene?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Genetic Marker Role:</strong> Morphological markers allow farm workers to identify and rogue fertile segregants during the early seedling stage, rather than having to wait for flower anthesis.
+        </div>
+      </div>
+
+      <!-- O7 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 07</span></div>
+        <div class="q-text"><strong>Q7. Isolation Distance:</strong> What isolation distance is mandatory for certified hybrid cotton seed production?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Certification Norm:</strong> A minimum physical separation of <strong>30 to 50 meters</strong> from any other cotton field to eliminate insect-mediated pollen drift.
+        </div>
+      </div>
+
+      <!-- O8 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 08</span></div>
+        <div class="q-text"><strong>Q8. EGMS Distinction:</strong> How do Thermosensitive (TGMS) and Photoperiod-sensitive (PGMS) male sterilities work?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>EGMS Dynamics:</strong> TGMS plants become sterile above high threshold temperatures (>32°C) and revert to self-fertile under cooler regimes (<28°C), enabling self-multiplication without needing a maintainer line.
+        </div>
+      </div>
+
+      <!-- O9 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 09</span></div>
+        <div class="q-text"><strong>Q9. Harknessii CMS Breakdown:</strong> Why did <em>G. harknessii</em> CMS lines run into issues in Khandesh?</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Agronomic Pitfall:</strong> High summer temperatures in northern Maharashtra often led to sterility breakdown, poor fertility restoration in elite cultivars, and inadequate boll set.
+        </div>
+      </div>
+
+      <!-- O10 -->
+      <div class="q-card" data-type="ojt">
+        <div class="q-meta-line"><span class="q-id">OJT Practical 10</span></div>
+        <div class="q-text"><strong>Q10. Boll Setting Calculation:</strong> If 100 male-sterile flowers are hand-pollinated and 42 develop into harvestable bolls, calculate the boll-setting success percentage.</div>
+        <button class="reveal-trigger" onclick="toggleReveal(this)">Reveal Field Observation ▾</button>
+        <div class="revealed-content">
+          <strong>Calculation:</strong><br>
+          Boll Setting (%) = (Total Harvestable Bolls / Total Crossed Flowers) × 100<br>
+          Boll Setting (%) = (42 / 100) × 100 = <strong>42%</strong>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    let correctCount = 0;
+    let attemptedCount = 0;
+
+    // Evaluate MCQs
+    function evalMCQ(button, isCorrect, explanation) {
+      const parentGrid = button.closest('.options-grid');
+      if (parentGrid.dataset.answered === "true") return;
+
+      parentGrid.dataset.answered = "true";
+      attemptedCount++;
+
+      const feedback = parentGrid.nextElementSibling;
+      feedback.classList.add('show');
+
+      if (isCorrect) {
+        button.classList.add('correct');
+        feedback.classList.add('correct');
+        feedback.innerHTML = `<strong>Correct:</strong> ${explanation}`;
+        correctCount++;
+      } else {
+        button.classList.add('incorrect');
+        feedback.classList.add('incorrect');
+        feedback.innerHTML = `<strong>Incorrect:</strong> ${explanation}`;
+
+        // Highlight correct sibling option
+        Array.from(parentGrid.children).forEach(btn => {
+          if (btn.getAttribute('onclick').includes('true')) {
+            btn.classList.add('correct');
+          }
+        });
+      }
+
+      Array.from(parentGrid.children).forEach(btn => btn.disabled = true);
+      updateScoreboard();
+    }
+
+    // Evaluate Fill in the Blanks
+    function checkFIB(btn) {
+      const input = btn.previousElementSibling;
+      const feedback = btn.parentElement.nextElementSibling;
+      const validAnswers = input.dataset.ans.toLowerCase().split(',');
+      const userVal = input.value.trim().toLowerCase();
+
+      if (!userVal) return;
+
+      feedback.classList.add('show');
+
+      if (validAnswers.some(ans => userVal.includes(ans.trim()))) {
+        feedback.className = "feedback-box show correct";
+        feedback.innerHTML = `<strong>Correct!</strong> Expected: "${validAnswers[0]}".`;
+      } else {
+        feedback.className = "feedback-box show incorrect";
+        feedback.innerHTML = `<strong>Incorrect!</strong> Correct answer: <strong>${validAnswers[0]}</strong>.`;
+      }
+    }
+
+    // Toggle Flashcards / Answers
+    function toggleReveal(btn) {
+      const panel = btn.nextElementSibling;
+      const isVisible = panel.classList.contains('show');
+
+      if (isVisible) {
+        panel.classList.remove('show');
+        btn.innerText = "Reveal Answer ▾";
+      } else {
+        panel.classList.add('show');
+        btn.innerText = "Hide Answer ▴";
+      }
+    }
+
+    // Update Score Badge
+    function updateScoreboard() {
+      document.getElementById('scoreVal').innerText = correctCount;
+      document.getElementById('attemptedVal').innerText = attemptedCount;
+    }
+
+    // Filter Buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.q-card');
+    const sectionHeadings = document.querySelectorAll('.section-heading');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+
+        cards.forEach(card => {
+          if (filter === 'all' || card.dataset.type === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        sectionHeadings.forEach(heading => {
+          if (filter === 'all' || heading.dataset.type === filter) {
+            heading.classList.remove('hidden');
+          } else {
+            heading.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Real-Time Search
+    const searchInput = document.getElementById('liveSearch');
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
